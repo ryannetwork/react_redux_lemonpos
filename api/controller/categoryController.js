@@ -1,8 +1,8 @@
-const _demo = require('../models/demo');
+const _clsCategory = require('../models/clsCategory');
 
 module.exports={
     find:(callBack)=>{
-     _demo.find().exec()
+        _clsCategory.find().exec()
      .then(doc=>{
         callBack(null,doc);
      }).catch(err=>{
@@ -10,14 +10,14 @@ module.exports={
       });
     },
     findById:(Id, callBack)=>{
-        _demo.findById(Id).exec().then((doc)=>{
+        _clsCategory.findById(Id).exec().then((doc)=>{
            callBack(null,doc)
         }).catch(err=>{
             callBack(err,null)
         })
        },
     post:(params, callBack)=>{
-        _demo.create(params).then(n=>{
+        _clsCategory.create(params).then(n=>{
             callBack(null,n)
         }).catch(err=>{
             callBack(err,null)
@@ -25,7 +25,7 @@ module.exports={
         
     },
     delete:(Id,callBack)=>{
-    _demo.deleteOne({_id:Id}).exec().then(n=>{
+        _clsCategory.deleteOne({_id:Id}).exec().then(n=>{
         callBack(null,n)
     }).catch(err=>{
         callBack(err,null)
@@ -33,7 +33,6 @@ module.exports={
     
     }
         
-    
        
    
 };

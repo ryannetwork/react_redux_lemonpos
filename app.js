@@ -2,7 +2,7 @@ const express = require('express');
 const app =express();
 const morgan =require('morgan');
 const bordParser =require('body-parser');
-const demoApi =require('./api/routes/demo');
+const appApi =require('./api/routes/index');
 const mongoose =require('mongoose');
 mongoose.connect('mongodb+srv://lemoncloud:lemoncloud@lemontech-msxsz.mongodb.net/test?retryWrites=true',{useNewUrlParser:true});
 app.use(morgan('dev'));
@@ -17,9 +17,8 @@ app.use((req,res,next)=>{
     }
     next();
 });
-
-
-app.use('/demo',demoApi);
+app.use('/demo',appApi.demo);
+app.use('/category',appApi.category);
 
 app.use((req,res,next)=>{
  const error = new Error("Not api Found");
