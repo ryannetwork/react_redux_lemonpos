@@ -17,8 +17,8 @@ app.use((req,res,next)=>{
     }
     next();
 });
-app.use('/demo',appApi.demo);
-app.use('/category',appApi.category);
+app.use('/api/inventory/demo',appApi.demo);
+app.use('/api/inventory/category',appApi.category);
 
 app.use((req,res,next)=>{
  const error = new Error("Not api Found");

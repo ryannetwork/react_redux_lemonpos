@@ -45,7 +45,7 @@ const CategoryHeader = ({setSearchText, searchText, mainTheme}) => {
 
             </div>
             <FuseAnimate animation="transition.slideRightIn" delay={300}>
-                <Button component={Link} to="/apps/e-commerce/products/new" className="whitespace-no-wrap" variant="contained">
+                <Button component={Link} to="/apps/category/categories/new" className="whitespace-no-wrap" variant="contained">
                     <span className="hidden sm:flex">Add New Category</span>
                     <span className="flex sm:hidden">New</span>
                 </Button>
@@ -57,14 +57,15 @@ const CategoryHeader = ({setSearchText, searchText, mainTheme}) => {
 function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
-        setSearchText: Actions.setProductsSearchText
+        setSearchText: Actions.setCategoriesSearchText
     }, dispatch);
 }
 
-function mapStateToProps({eCommerceApp, fuse})
+function mapStateToProps({categoryApp, fuse})
 {
+  
     return {
-        searchText: eCommerceApp.products.searchText,
+        searchText: categoryApp.categories.searchText,
         mainTheme : fuse.settings.mainTheme
     }
 }

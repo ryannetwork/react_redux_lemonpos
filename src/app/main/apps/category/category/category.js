@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {withStyles, Button, Tab, Tabs, TextField, InputAdornment, Icon, Typography} from '@material-ui/core';
-import {FuseAnimate, FusePageCarded, FuseChipSelect} from '@fuse';
+import {withStyles, Button, Tab, Tabs, TextField, Icon, Typography,Checkbox,FormControlLabel} from '@material-ui/core';
+import {FuseAnimate, FusePageCarded} from '@fuse';
 import {orange} from '@material-ui/core/colors';
 import {Link, withRouter} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
@@ -10,6 +10,7 @@ import _ from '@lodash';
 import withReducer from 'app/store/withReducer';
 import * as Actions from '../store/actions';
 import reducer from '../store/reducers';
+
 
 const styles = theme => ({
     productImageFeaturedStar: {
@@ -51,19 +52,21 @@ class Category extends Component {
 
     componentDidMount()
     {
-        this.updateProductState();
+        this.props.getCategories();
+        this.updateCategoryState();
     }
 
     componentDidUpdate(prevProps, prevState, snapshot)
     {
+       
         if ( !_.isEqual(this.props.location, prevProps.location) )
         {
-            this.updateProductState();
+            this.updateCategoryState();
         }
 
         if (
-            (this.props.product.data && !this.state.form) ||
-            (this.props.product.data && this.state.form && this.props.product.data.id !== this.state.form.id)
+            (this.props.category.data && !this.state.form) ||
+            (this.props.category.data && this.state.form && this.props.category.data._id !== this.state.form._id)
         )
         {
             this.updateFormState();
@@ -71,21 +74,23 @@ class Category extends Component {
     }
 
     updateFormState = () => {
-        this.setState({form: this.props.product.data})
+     
+        this.setState({form: this.props.category.data})
     };
 
-    updateProductState = () => {
+    updateCategoryState = () => {
         const params = this.props.match.params;
-        const {productId} = params;
-
-        if ( productId === 'new' )
+        const {categoryId} = params;
+       
+        if ( categoryId === 'new' )
         {
-            this.props.newProduct();
+            this.props.newCategory();
         }
         else
         {
-            this.props.getProduct(this.props.match.params);
+            this.props.getCategory(this.props.match.params);
         }
+     
     };
 
     handleChangeTab = (event, tabValue) => {
@@ -106,18 +111,19 @@ class Category extends Component {
 
     canBeSubmitted()
     {
-        const {name} = this.state.form;
+        const {catDesc} = this.state.form;
         return (
-            name.length > 0 &&
-            !_.isEqual(this.props.product.data, this.state.form)
+            catDesc.length > 0 &&
+            !_.isEqual(this.props.category.data, this.state.form)
         );
     }
 
     render()
     {
-        const {classes, saveProduct} = this.props;
-        const {tabValue, form} = this.state;
 
+        const {classes, saveCategory,removeCategory} = this.props;
+        const {tabValue, form} = this.state;
+      
         return (
             <FusePageCarded
                 classes={{
@@ -131,40 +137,42 @@ class Category extends Component {
                             <div className="flex flex-col items-start max-w-full">
 
                                 <FuseAnimate animation="transition.slideRightIn" delay={300}>
-                                    <Typography className="normal-case flex items-center sm:mb-12" component={Link} role="button" to="/apps/e-commerce/products">
+                                    <Typography className="normal-case flex items-center sm:mb-12" component={Link} role="button" to="/apps/category/categories">
                                         <Icon className="mr-4 text-20">arrow_back</Icon>
-                                        Products
+                                        Category
                                     </Typography>
                                 </FuseAnimate>
 
                                 <div className="flex items-center max-w-full">
                                     <FuseAnimate animation="transition.expandIn" delay={300}>
-                                        {form.images.length > 0 ? (
-                                            <img className="w-32 sm:w-48 mr-8 sm:mr-16 rounded" src={_.find(form.images, {id: form.featuredImageId}).url} alt={form.name}/>
+                                        {form.catImage.length > 0 ? (
+                                            <img className="w-32 sm:w-48 mr-8 sm:mr-16 rounded" src={_.find(form.catImage, {id: form.featuredImageId}).url} alt={form.catDesc}/>
                                         ) : (
-                                            <img className="w-32 sm:w-48 mr-8 sm:mr-16 rounded" src="assets/images/ecommerce/product-image-placeholder.png" alt={form.name}/>
+                                            <img className="w-32 sm:w-48 mr-8 sm:mr-16 rounded" src="assets/images/ecommerce/product-image-placeholder.png" alt={form.catDesc}/>
                                         )}
                                     </FuseAnimate>
                                     <div className="flex flex-col min-w-0">
                                         <FuseAnimate animation="transition.slideLeftIn" delay={300}>
                                             <Typography className="text-16 sm:text-20 truncate">
-                                                {form.name ? form.name : 'New Product'}
+                                                {form.catDesc ? form.catDesc : 'New Category'}
                                             </Typography>
                                         </FuseAnimate>
                                         <FuseAnimate animation="transition.slideLeftIn" delay={300}>
-                                            <Typography variant="caption">Product Detail</Typography>
+                                            <Typography variant="caption">Category Detail</Typography>
                                         </FuseAnimate>
                                     </div>
                                 </div>
                             </div>
                             <FuseAnimate animation="transition.slideRightIn" delay={300}>
+                            
                                 <Button
                                     className="whitespace-no-wrap"
                                     variant="contained"
-                                    disabled={!this.canBeSubmitted()}
-                                    onClick={() => saveProduct(form)}
+                                    //disabled={!this.canBeSubmitted()}
+                                    onClick={() =>!this.canBeSubmitted()? removeCategory(form):saveCategory(form)}
+                                    
                                 >
-                                    Save
+                                    { !this.canBeSubmitted()?'Remove':'Save'}
                                 </Button>
                             </FuseAnimate>
                         </div>
@@ -181,10 +189,7 @@ class Category extends Component {
                         classes={{root: "w-full h-64"}}
                     >
                         <Tab className="h-64 normal-case" label="Basic Info"/>
-                        <Tab className="h-64 normal-case" label="Product Images"/>
-                        <Tab className="h-64 normal-case" label="Pricing"/>
-                        <Tab className="h-64 normal-case" label="Inventory"/>
-                        <Tab className="h-64 normal-case" label="Shipping"/>
+                        <Tab className="h-64 normal-case" label="Category Images"/>
                     </Tabs>
                 }
                 content={
@@ -196,13 +201,13 @@ class Category extends Component {
 
                                     <TextField
                                         className="mt-8 mb-16"
-                                        error={form.name === ''}
+                                        error={form.catCode === ''}
                                         required
-                                        label="Name"
+                                        label="Code"
                                         autoFocus
-                                        id="name"
-                                        name="name"
-                                        value={form.name}
+                                        id="catCode"
+                                        name="catCode"
+                                        value={form.catCode}
                                         onChange={this.handleChange}
                                         variant="outlined"
                                         fullWidth
@@ -210,22 +215,45 @@ class Category extends Component {
 
                                     <TextField
                                         className="mt-8 mb-16"
-                                        id="description"
-                                        name="description"
+                                        id="catDesc"
+                                        name="catDesc"
                                         onChange={this.handleChange}
                                         label="Description"
                                         type="text"
-                                        value={form.description}
+                                        value={form.catDesc}
+                                        rows={5}
+                                        variant="outlined"
+                                        fullWidth
+                                    />
+                                        <TextField
+                                        className="mt-8 mb-16"
+                                        id="catDesc2"
+                                        name="catDesc2"
+                                        onChange={this.handleChange}
+                                        label="Description"
+                                        type="text"
+                                        value={form.catDesc2}
                                         multiline
                                         rows={5}
                                         variant="outlined"
                                         fullWidth
                                     />
-
-                                    <FuseChipSelect
+                                    <FormControlLabel control={
+                                          <Checkbox
+                                     
+                                          id="catStatus"
+                                          name="catStatus"
+                                          checked={form.catStatus}
+                                          onChange={this.handleChange}
+                                         />
+                                    }
+                                    label="Status"
+                                    />
+                                   
+                                    {/* <FuseChipSelect
                                         className="mt-8 mb-24"
                                         value={
-                                            form.categories.map(item => ({
+                                            this.props.categories.map(item => ({
                                                 value: item,
                                                 label: item
                                             }))
@@ -240,27 +268,7 @@ class Category extends Component {
                                             variant        : 'outlined'
                                         }}
                                         isMulti
-                                    />
-
-                                    <FuseChipSelect
-                                        className="mt-8 mb-16"
-                                        value={
-                                            form.tags.map(item => ({
-                                                value: item,
-                                                label: item
-                                            }))
-                                        }
-                                        onChange={(value) => this.handleChipChange(value, 'tags')}
-                                        placeholder="Select multiple tags"
-                                        textFieldProps={{
-                                            label          : 'Tags',
-                                            InputLabelProps: {
-                                                shrink: true
-                                            },
-                                            variant        : 'outlined'
-                                        }}
-                                        isMulti
-                                    />
+                                    /> */}
                                 </div>
                             )}
                             {tabValue === 1 && (
@@ -284,169 +292,6 @@ class Category extends Component {
                                     </div>
                                 </div>
                             )}
-                            {tabValue === 2 && (
-                                <div>
-
-                                    <TextField
-                                        className="mt-8 mb-16"
-                                        label="Tax Excluded Price"
-                                        id="priceTaxExcl"
-                                        name="priceTaxExcl"
-                                        value={form.priceTaxExcl}
-                                        onChange={this.handleChange}
-                                        InputProps={{
-                                            startAdornment: <InputAdornment position="start">$</InputAdornment>
-                                        }}
-                                        type="number"
-                                        variant="outlined"
-                                        autoFocus
-                                        fullWidth
-                                    />
-
-                                    <TextField
-                                        className="mt-8 mb-16"
-                                        label="Tax Included Price"
-                                        id="priceTaxIncl"
-                                        name="priceTaxIncl"
-                                        value={form.priceTaxIncl}
-                                        onChange={this.handleChange}
-                                        InputProps={{
-                                            startAdornment: <InputAdornment position="start">$</InputAdornment>
-                                        }}
-                                        type="number"
-                                        variant="outlined"
-                                        fullWidth
-                                    />
-
-
-                                    <TextField
-                                        className="mt-8 mb-16"
-                                        label="Tax Rate"
-                                        id="taxRate"
-                                        name="taxRate"
-                                        value={form.taxRate}
-                                        onChange={this.handleChange}
-                                        InputProps={{
-                                            startAdornment: <InputAdornment position="start">$</InputAdornment>
-                                        }}
-                                        type="number"
-                                        variant="outlined"
-                                        fullWidth
-                                    />
-
-                                    <TextField
-                                        className="mt-8 mb-16"
-                                        label="Compared Price"
-                                        id="comparedPrice"
-                                        name="comparedPrice"
-                                        value={form.comparedPrice}
-                                        onChange={this.handleChange}
-                                        InputProps={{
-                                            startAdornment: <InputAdornment position="start">$</InputAdornment>
-                                        }}
-                                        type="number"
-                                        variant="outlined"
-                                        fullWidth
-                                        helperText="Add a compare price to show next to the real price"
-                                    />
-
-                                </div>
-                            )}
-                            {tabValue === 3 && (
-                                <div>
-
-                                    <TextField
-                                        className="mt-8 mb-16"
-                                        required
-                                        label="SKU"
-                                        autoFocus
-                                        id="sku"
-                                        name="sku"
-                                        value={form.sku}
-                                        onChange={this.handleChange}
-                                        variant="outlined"
-                                        fullWidth
-                                    />
-
-                                    <TextField
-                                        className="mt-8 mb-16"
-                                        label="Quantity"
-                                        id="quantity"
-                                        name="quantity"
-                                        value={form.quantity}
-                                        onChange={this.handleChange}
-                                        variant="outlined"
-                                        type="number"
-                                        fullWidth
-                                    />
-                                </div>
-                            )}
-                            {tabValue === 4 && (
-                                <div>
-                                    <div className="flex">
-                                        <TextField
-                                            className="mt-8 mb-16 mr-8"
-                                            label="Width"
-                                            autoFocus
-                                            id="width"
-                                            name="width"
-                                            value={form.width}
-                                            onChange={this.handleChange}
-                                            variant="outlined"
-                                            fullWidth
-                                        />
-
-                                        <TextField
-                                            className="mt-8 mb-16 mr-8"
-                                            label="Height"
-                                            id="height"
-                                            name="height"
-                                            value={form.height}
-                                            onChange={this.handleChange}
-                                            variant="outlined"
-                                            fullWidth
-                                        />
-
-                                        <TextField
-                                            className="mt-8 mb-16 mr-8"
-                                            label="Depth"
-                                            id="depth"
-                                            name="depth"
-                                            value={form.depth}
-                                            onChange={this.handleChange}
-                                            variant="outlined"
-                                            fullWidth
-                                        />
-
-                                    </div>
-
-                                    <TextField
-                                        className="mt-8 mb-16"
-                                        label="Weight"
-                                        id="weight"
-                                        name="weight"
-                                        value={form.weight}
-                                        onChange={this.handleChange}
-                                        variant="outlined"
-                                        fullWidth
-                                    />
-
-                                    <TextField
-                                        className="mt-8 mb-16"
-                                        label="Extra Shipping Fee"
-                                        id="extraShippingFee"
-                                        name="extraShippingFee"
-                                        value={form.extraShippingFee}
-                                        onChange={this.handleChange}
-                                        variant="outlined"
-                                        InputProps={{
-                                            startAdornment: <InputAdornment position="start">$</InputAdornment>
-                                        }}
-                                        fullWidth
-                                    />
-
-                                </div>
-                            )}
                         </div>
                     )
                 }
@@ -459,17 +304,22 @@ class Category extends Component {
 function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
-        getProduct : Actions.getProduct,
-        newProduct : Actions.newProduct,
-        saveProduct: Actions.saveProduct
+        getCategories:Actions.getCategories,
+        getCategory : Actions.getCategory,
+        newCategory : Actions.newCategory,
+        saveCategory: Actions.saveCategory,
+        removeCategory:Actions.removeCategory
+     
     }, dispatch);
 }
 
-function mapStateToProps({eCommerceApp})
+function mapStateToProps({categoryApp})
 {
     return {
-        product: eCommerceApp.product
+        categories:categoryApp.categories,
+        category: categoryApp.category
+        
     }
 }
 
-export default withReducer('eCommerceApp', reducer)(withStyles(styles, {withTheme: true})(withRouter(connect(mapStateToProps, mapDispatchToProps)(Category))));
+export default withReducer('categoryApp', reducer)(withStyles(styles, {withTheme: true})(withRouter(connect(mapStateToProps, mapDispatchToProps)(Category))));

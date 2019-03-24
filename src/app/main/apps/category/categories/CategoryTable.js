@@ -4,7 +4,6 @@ import {FuseScrollbars} from '@fuse';
 import {withRouter} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import connect from 'react-redux/es/connect/connect';
-import classNames from 'classnames';
 import _ from '@lodash';
 import CategoryTableHead from './CategoryTableHead';
 import * as Actions from '../store/actions';
@@ -15,22 +14,22 @@ class CategoryTable extends Component {
         order      : 'asc',
         orderBy    : null,
         selected   : [],
-        data       : this.props.products,
+        data       : this.props.categories,
         page       : 0,
         rowsPerPage: 10
     };
 
     componentDidMount()
     {
-        this.props.getProducts();
+        this.props.getCategories();
     }
 
     componentDidUpdate(prevProps, prevState)
     {
-        if ( !_.isEqual(this.props.products, prevProps.products) || !_.isEqual(this.props.searchText, prevProps.searchText) )
+        if ( !_.isEqual(this.props.categories, prevProps.categories) || !_.isEqual(this.props.searchText, prevProps.searchText) )
         {
-            const data = this.getFilteredArray(this.props.products, this.props.searchText);
-            this.setState({data})
+            const data = this.getFilteredArray(this.props.categories, this.props.searchText);
+            this.setState({data});
         }
     }
 
@@ -39,7 +38,7 @@ class CategoryTable extends Component {
         {
             return data;
         }
-        return _.filter(data, item => item.name.toLowerCase().includes(searchText.toLowerCase()));
+        return _.filter(data, item => item.catDesc.toLowerCase().includes(searchText.toLowerCase()));
     };
 
     handleRequestSort = (event, property) => {
@@ -60,14 +59,15 @@ class CategoryTable extends Component {
     handleSelectAllClick = event => {
         if ( event.target.checked )
         {
-            this.setState(state => ({selected: this.state.data.map(n => n.id)}));
+            this.setState(state => ({selected: this.state.data.map(n => n._id)}));
             return;
         }
         this.setState({selected: []});
     };
 
     handleClick = (item) => {
-        this.props.history.push('/apps/e-commerce/products/' + item.id + '/' + item.handle);
+        console.log("eee",item);
+        this.props.history.push('/apps/category/categories/' + item._id + '/' + item.catDesc);
     };
 
     handleCheck = (event, id) => {
@@ -146,7 +146,7 @@ class CategoryTable extends Component {
                             ], [order])
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map(n => {
-                                    const isSelected = this.isSelected(n.id);
+                                    const isSelected = this.isSelected(n._id);
                                     return (
                                         <TableRow
                                             className="h-64 cursor-pointer"
@@ -154,7 +154,7 @@ class CategoryTable extends Component {
                                             role="checkbox"
                                             aria-checked={isSelected}
                                             tabIndex={-1}
-                                            key={n.id}
+                                            key={n._id}
                                             selected={isSelected}
                                             onClick={event => this.handleClick(n)}
                                         >
@@ -162,38 +162,33 @@ class CategoryTable extends Component {
                                                 <Checkbox
                                                     checked={isSelected}
                                                     onClick={event => event.stopPropagation()}
-                                                    onChange={event => this.handleCheck(event, n.id)}
+                                                    onChange={event => this.handleCheck(event, n._id)}
                                                 />
                                             </TableCell>
 
                                             <TableCell className="w-52" component="th" scope="row" padding="none">
-                                                {n.images.length > 0 ? (
-                                                    <img className="w-full block rounded" src={_.find(n.images, {id: n.featuredImageId}).url} alt={n.name}/>
+                                                {n.catImage.length > 0 ? (
+                                                    <img className="w-full block rounded" src={_.find(n.catImage, {id: n.featuredImageId}).url} alt={n.catDesc}/>
                                                 ) : (
-                                                    <img className="w-full block rounded" src="assets/images/ecommerce/product-image-placeholder.png" alt={n.name}/>
+                                                    <img className="w-full block rounded" src="assets/images/ecommerce/product-image-placeholder.png" alt={n.catDesc}/>
                                                 )}
                                             </TableCell>
 
                                             <TableCell component="th" scope="row">
-                                                {n.name}
+                                                {n.catCode}
                                             </TableCell>
-
-                                            <TableCell className="truncate" component="th" scope="row">
-                                                {n.categories.join(', ')}
+                                            <TableCell component="th" scope="row">
+                                                {n.catDesc}
                                             </TableCell>
-
-                                            <TableCell component="th" scope="row" align="right">
-                                                <span>$</span>
-                                                {n.priceTaxIncl}
+                                            <TableCell component="th" scope="row">
+                                                {n.catDesc2}
                                             </TableCell>
-
-                                            <TableCell component="th" scope="row" align="right">
-                                                {n.quantity}
-                                                <i className={classNames("inline-block w-8 h-8 rounded ml-8", n.quantity <= 5 && "bg-red", n.quantity > 5 && n.quantity <= 25 && "bg-orange", n.quantity > 25 && "bg-green")}/>
+                                            <TableCell component="th" scope="row">
+                                                {n.catParent}
                                             </TableCell>
 
                                             <TableCell component="th" scope="row" align="right">
-                                                {n.active ?
+                                                {n.catStatus ?
                                                     (
                                                         <Icon className="text-green text-20">check_circle</Icon>
                                                     ) :
@@ -231,15 +226,15 @@ class CategoryTable extends Component {
 function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
-        getProducts: Actions.getProducts
+        getCategories: Actions.getCategories
     }, dispatch);
 }
 
-function mapStateToProps({eCommerceApp})
+function mapStateToProps({categoryApp})
 {
     return {
-        products  : eCommerceApp.products.data,
-        searchText: eCommerceApp.products.searchText
+        categories  : categoryApp.categories.data,
+        searchText: categoryApp.categories.searchText
     }
 }
 

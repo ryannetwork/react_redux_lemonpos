@@ -1,24 +1,26 @@
 import * as Actions from '../actions';
 
 const initialState = {
-    data: null
+    data      : [],
+    searchText: ''
 };
 
-const productReducer = function (state = initialState, action) {
+const categoriesReducer = function (state = initialState, action) {
     switch ( action.type )
     {
-        case Actions.GET_PRODUCT:
+      
+        case Actions.GET_CATEGORIES:
         {
             return {
                 ...state,
                 data: action.payload
             };
         }
-        case Actions.SAVE_PRODUCT:
+        case Actions.SET_CATEGORIES_SEARCH_TEXT:
         {
             return {
                 ...state,
-                data: action.payload
+                searchText: action.searchText
             };
         }
         default:
@@ -28,4 +30,4 @@ const productReducer = function (state = initialState, action) {
     }
 };
 
-export default productReducer;
+export default categoriesReducer;

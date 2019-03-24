@@ -6,6 +6,7 @@ _id:mongoose.Schema.Types.ObjectId,
   catDesc2: String,
   catStatus: Boolean,
   catParent: Number,
+  catImage:[],
   chk:Boolean
 });
  module.exports =mongoose.model('category',categorySchema);

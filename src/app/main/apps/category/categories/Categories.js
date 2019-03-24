@@ -23,4 +23,4 @@ const Categories = () => {
     );
 };
 
-export default withReducer('eCommerceApp', reducer)(Categories);
+export default withReducer('categoryApp', reducer)(Categories);

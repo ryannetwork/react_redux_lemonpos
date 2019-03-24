@@ -25,7 +25,7 @@ router.get('/:categoryId',(req,res,next)=>{
       if(err){
           res.json({error:err})
       }else {
-          res.json(doc)
+          res.json(doc);
       }
     });
     
@@ -38,12 +38,12 @@ router.delete('/:categoryId',(req,res,next)=>{
         if(err){
             res.json({error:err});
         }else {
-            res.json(data)
+            res.json(data);
         }
-    })
+    });
     
 });
-router.post('/',(req,res,next)=>{
+router.post('/create',(req,res,next)=>{
     const objData = new _lsCategory({
         _id:new mongoose.Types.ObjectId(),
         catCode: req.body.catCode,

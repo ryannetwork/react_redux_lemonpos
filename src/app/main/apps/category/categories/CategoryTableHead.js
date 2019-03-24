@@ -19,47 +19,41 @@ import classNames from 'classnames';
 
 const rows = [
     {
-        id            : 'image',
-        align         : 'left',
+        id            : 'catImage',
+        align         : 'center',
         disablePadding: true,
         label         : '',
         sort          : false
     },
     {
-        id            : 'name',
+        id            : 'catDesc',
         align         : 'left',
         disablePadding: false,
-        label         : 'Name',
+        label         : 'Description',
         sort          : true
     },
     {
-        id            : 'categories',
+        id            : 'catDesc2',
         align         : 'left',
         disablePadding: false,
-        label         : 'Category',
+        label         : 'Description 2',
         sort          : true
     },
     {
-        id            : 'priceTaxIncl',
-        align         : 'right',
+        id            : 'catStatus',
+        align         : 'center',
         disablePadding: false,
-        label         : 'Price',
+        label         : 'Status',
         sort          : true
     },
     {
-        id            : 'quantity',
-        align         : 'right',
+        id            : 'catParent',
+        align         : 'center',
         disablePadding: false,
-        label         : 'Quantity',
-        sort          : true
-    },
-    {
-        id            : 'active',
-        align         : 'right',
-        disablePadding: false,
-        label         : 'Active',
+        label         : 'Parent',
         sort          : true
     }
+   
 ];
 
 const styles = theme => ({
@@ -70,7 +64,7 @@ const styles = theme => ({
 
 class CategoryTableHead extends React.Component {
     state = {
-        selectedProductsMenu: null
+        selectedCategories: null
     };
 
     createSortHandler = property => event => {
@@ -78,18 +72,18 @@ class CategoryTableHead extends React.Component {
         this.props.onRequestSort(event, property);
     };
 
-    openSelectedProductsMenu = (event) => {
-        this.setState({selectedProductsMenu: event.currentTarget});
+    openSelectedCategories = (event) => {
+        this.setState({selectedCategories: event.currentTarget});
     };
 
-    closeSelectedProductsMenu = () => {
-        this.setState({selectedProductsMenu: null});
+    closeSelectedCategories = () => {
+        this.setState({selectedCategories: null});
     };
 
     render()
     {
         const {onSelectAllClick, order, orderBy, numSelected, rowCount, classes} = this.props;
-        const {selectedProductsMenu} = this.state;
+        const {selectedCategories} = this.state;
 
         return (
             <TableHead>
@@ -103,22 +97,22 @@ class CategoryTableHead extends React.Component {
                         {numSelected > 0 && (
                             <div className={classNames("flex items-center justify-center absolute w-64 pin-t pin-l ml-68 h-64 z-10", classes.actionsButtonWrapper)}>
                                 <IconButton
-                                    aria-owns={selectedProductsMenu ? 'selectedProductsMenu' : null}
+                                    aria-owns={selectedCategories ? 'selectedCategories' : null}
                                     aria-haspopup="true"
-                                    onClick={this.openSelectedProductsMenu}
+                                    onClick={this.openSelectedCategories}
                                 >
                                     <Icon>more_horiz</Icon>
                                 </IconButton>
                                 <Menu
-                                    id="selectedProductsMenu"
-                                    anchorEl={selectedProductsMenu}
-                                    open={Boolean(selectedProductsMenu)}
-                                    onClose={this.closeSelectedProductsMenu}
+                                    id="selectedCategories"
+                                    anchorEl={selectedCategories}
+                                    open={Boolean(selectedCategories)}
+                                    onClose={this.closeSelectedCategories}
                                 >
                                     <MenuList>
                                         <MenuItem
                                             onClick={() => {
-                                                this.closeSelectedProductsMenu();
+                                                this.closeSelectedCategories();
                                             }}
                                         >
                                             <ListItemIcon className={classes.icon}>
