@@ -1,4 +1,4 @@
 const demo=require('./demo');
-const category =require('./categoryRoute')
-
-module.exports = {demo,category}
+const category =require('./categoryRoute');
+const itemsku =require('./itemskuRoute');
+module.exports = {demo,category,itemsku};

@@ -5,10 +5,10 @@ const initialState = {
     isReady:false,
 };
 
-const categoryReducer = function (state = initialState, action) {
+const itemSKUReducer = function (state = initialState, action) {
     switch ( action.type )
     {
-        case Actions.GET_CATEGORY:
+        case Actions.GET_ITEMSKU:
         {
             return {
                 ...state,
@@ -16,7 +16,7 @@ const categoryReducer = function (state = initialState, action) {
                 isReady:action.isReady
             };
         }
-        case Actions.SAVE_CATEGORY:
+        case Actions.SAVE_ITEMSKU:
         {
             return {
                 ...state,
@@ -24,7 +24,7 @@ const categoryReducer = function (state = initialState, action) {
                 isReady:action.isReady
             };
         }
-        case Actions.UPDATE_CATEGORY:
+        case Actions.UPDATE_ITEMSKU:
         {
             return {
                 ...state,
@@ -32,7 +32,7 @@ const categoryReducer = function (state = initialState, action) {
                 isReady:action.isReady
             };
         }
-        case Actions.REMOVE_CATEGORY:
+        case Actions.REMOVE_ITEMSKU:
         {
             return {
                 ...state,
@@ -49,4 +49,4 @@ const categoryReducer = function (state = initialState, action) {
     }
 };
 
-export default categoryReducer;
+export default itemSKUReducer;

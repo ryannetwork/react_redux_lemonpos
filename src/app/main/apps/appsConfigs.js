@@ -3,10 +3,12 @@ import {ProjectDashboardAppConfig} from './dashboards/project/ProjectDashboardAp
 import {ECommerceAppConfig} from './e-commerce/ECommerceAppConfig';
 import {productConfig} from './product/productConfig';
 import {categoryConfig} from './category/categoryConfig';
+import {itemskuConfig } from './itemsku/itemskuConfig';
 export const appsConfigs = [
     AnalyticsDashboardAppConfig,
     ProjectDashboardAppConfig,
     ECommerceAppConfig,
     productConfig,
     categoryConfig,
+    itemskuConfig
 ];

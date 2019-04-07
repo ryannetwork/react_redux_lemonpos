@@ -77,7 +77,7 @@ const navigationConfig = [
                         'id'   : 'item-sku',
                         'title': 'Item SKU',
                         'type' : 'item',
-                        'url'  : '/apps/dashboards/project'
+                        'url'  : '/apps/itemsku/itemssku'
                     }
                 ]
             },

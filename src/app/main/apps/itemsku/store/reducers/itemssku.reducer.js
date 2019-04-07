@@ -5,18 +5,18 @@ const initialState = {
     searchText: ''
 };
 
-const categoriesReducer = function (state = initialState, action) {
+const itemsSKUReducer = function (state = initialState, action) {
     switch ( action.type )
     {
       
-        case Actions.GET_CATEGORIES:
+        case Actions.GET_ITEMSSKU:
         {
             return {
                 ...state,
                 data: action.payload
             };
         }
-        case Actions.UPDATE_CATEGORIES:
+        case Actions.UPDATE_ITEMSSKU:
         {
             const _objData = state.data.filter(n=> n._id !==action.payload._id);
             _objData.push(action.payload)
@@ -26,9 +26,8 @@ const categoriesReducer = function (state = initialState, action) {
              
             };
         }
-        case Actions.DELETE_CATEGORIES:
+        case Actions.DELETE_ITEMSSKU:
         {
-            console.log(action.payload)
             const _objData = state.data.filter(n=> n._id !==action.payload);
             return {
                 ...state,
@@ -36,7 +35,7 @@ const categoriesReducer = function (state = initialState, action) {
              
             };
         }
-        case Actions.SET_CATEGORIES_SEARCH_TEXT:
+        case Actions.SET_ITEMSSKU_SEARCH_TEXT:
         {
             return {
                 ...state,
@@ -50,4 +49,4 @@ const categoriesReducer = function (state = initialState, action) {
     }
 };
 
-export default categoriesReducer;
+export default itemsSKUReducer;

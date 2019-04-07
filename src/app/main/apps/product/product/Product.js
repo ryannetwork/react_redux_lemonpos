@@ -46,7 +46,8 @@ class Product extends Component {
 
     state = {
         tabValue: 0,
-        form    : null
+        form    : null,
+        categories:[]
     };
 
     componentDidMount()
@@ -71,7 +72,7 @@ class Product extends Component {
     }
 
     updateFormState = () => {
-        this.setState({form: this.props.product.data})
+        this.setState({form: this.props.product.data,categories:this.props.categories})
     };
 
     updateProductState = () => {
@@ -115,9 +116,10 @@ class Product extends Component {
 
     render()
     {
+
+
         const {classes, saveProduct} = this.props;
         const {tabValue, form} = this.state;
-
         return (
             <FusePageCarded
                 classes={{

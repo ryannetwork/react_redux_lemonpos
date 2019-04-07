@@ -12,7 +12,6 @@ import NavbarWrapperLayout1 from './components/NavbarWrapperLayout1';
 import SettingsPanel from 'app/fuse-layouts/shared-components/SettingsPanel';
 import classNames from 'classnames';
 import AppContext from 'app/AppContext';
-
 const styles = theme => ({
     root          : {
         position          : 'relative',
@@ -72,8 +71,7 @@ const styles = theme => ({
 
 const Layout1 = ({classes, settings, children}) => {
     // console.warn('FuseLayout:: rendered');
-    const layoutConfig = settings.layout.config;
-
+    const layoutConfig = settings.layout.config;    
     switch ( layoutConfig.scroll )
     {
         case 'body':

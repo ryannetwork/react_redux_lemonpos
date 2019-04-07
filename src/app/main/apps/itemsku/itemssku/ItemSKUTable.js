@@ -5,46 +5,45 @@ import {withRouter} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import _ from '@lodash';
-import CategoryTableHead from './CategoryTableHead';
+import ItemSKUTableHead from './ItemSKUTableHead';
 import * as Actions from '../store/actions';
-import  {socket} from '../../../../socket';
-class CategoryTable extends Component {
+import {socket} from  '../../../../socket';
+class ItemSKUTable extends Component {
     constructor(props){
         super(props);
-        socket.on('createdCategory',(res)=>{
-            this.props.updateCategories(res);
+        socket.on('createdItemSKU',(res)=>{
+            this.props.updateItemsSKU(res);
         });
-        socket.on('updatedCategory',(res)=>{
-            this.props.updateCategories(res);
+        socket.on('updatedItemSKU',(res)=>{
+            this.props.updateItemsSKU(res);
             
         });
-        socket.on('deletedCategory',(Id)=>{
-            this.props.deleteCategories(Id);
+        socket.on('deletedItemSKU',(Id)=>{
+            this.props.deleteItemsSKU(Id);
         });
     }
-state = {
-    order      : 'asc',
-    orderBy    : null,
-    selected   : [],
-    data       : this.props.categories,
-    page       : 0,
-    rowsPerPage: 10
-};
+    state = {
+        order      : 'asc',
+        orderBy    : null,
+        selected   : [],
+        data       : this.props.itemssku,
+        page       : 0,
+        rowsPerPage: 10
+    };
 
     componentDidMount()
     {
-        this.props.getCategories();
-        
+        this.props.getItemsSKU();
     }
     componentWillUnmount(){
         
-         socket.removeAllListeners();
-    }
+        socket.removeAllListeners();
+   }
     componentDidUpdate(prevProps, prevState)
     {
-        if ( !_.isEqual(this.props.categories, prevProps.categories) || !_.isEqual(this.props.searchText, prevProps.searchText) )
+        if ( !_.isEqual(this.props.itemssku, prevProps.itemssku) || !_.isEqual(this.props.searchText, prevProps.searchText) )
         {
-            const data = this.getFilteredArray(this.props.categories, this.props.searchText);
+            const data = this.getFilteredArray(this.props.itemssku, this.props.searchText);
             this.setState({data});
         }
     }
@@ -54,7 +53,7 @@ state = {
         {
             return data;
         }
-        return _.filter(data, item => item.catDesc.toLowerCase().includes(searchText.toLowerCase()));
+        return _.filter(data, item => item.skuName.toLowerCase().includes(searchText.toLowerCase()));
     };
 
     handleRequestSort = (event, property) => {
@@ -82,7 +81,7 @@ state = {
     };
 
     handleClick = (item) => {
-        this.props.history.push('/apps/category/categories/' + item._id + '/' + item.catDesc);
+        this.props.history.push('/apps/itemsku/itemssku/' + item._id + '/' + item.skuName);
     };
 
     handleCheck = (event, id) => {
@@ -123,8 +122,8 @@ state = {
 
     isSelected = id => this.state.selected.indexOf(id) !== -1;
 
-    render() {
-   
+    render()
+    {
         const {order, orderBy, selected, rowsPerPage, page, data} = this.state;
 
         return (
@@ -134,7 +133,7 @@ state = {
 
                     <Table className="min-w-xl" aria-labelledby="tableTitle">
 
-                        <CategoryTableHead
+                        <ItemSKUTableHead
                             numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
@@ -148,9 +147,9 @@ state = {
                                 (o) => {
                                     switch ( orderBy )
                                     {
-                                        case 'categories':
+                                        case 'itemssku':
                                         {
-                                            return o.categories[0];
+                                            return o.itemssku[0];
                                         }
                                         default:
                                         {
@@ -181,29 +180,21 @@ state = {
                                                 />
                                             </TableCell>
 
-                                            <TableCell className="w-52" component="th" scope="row" padding="none">
-                                                {n.catImage.length > 0 ? (
-                                                    <img className="w-full block rounded" src={_.find(n.catImage, {id: n.featuredImageId}).url} alt={n.catDesc}/>
-                                                ) : (
-                                                    <img className="w-full block rounded" src="assets/images/ecommerce/product-image-placeholder.png" alt={n.catDesc}/>
-                                                )}
-                                            </TableCell>
-
                                             <TableCell component="th" scope="row">
-                                                {n.catCode}
+                                                {n.skuCode}
                                             </TableCell>
                                             <TableCell component="th" scope="row">
-                                                {n.catDesc}
+                                                {n.skuName}
                                             </TableCell>
                                             <TableCell component="th" scope="row">
-                                                {n.catDesc2}
+                                                {n.skuDesc}
                                             </TableCell>
                                             <TableCell component="th" scope="row">
-                                                {n.catParent.map(n=>n.label).join(",")}
+                                                {n.skuParent.map(n=>n.label).join(",")}
                                             </TableCell>
 
                                             <TableCell component="th" scope="row" align="right">
-                                                {n.catStatus ?
+                                                {n.skuStatus ?
                                                     (
                                                         <Icon className="text-green text-20">check_circle</Icon>
                                                     ) :
@@ -241,18 +232,18 @@ state = {
 function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
-        getCategories: Actions.getCategories,
-        updateCategories:Actions.updateCategories,
-        deleteCategories:Actions.deleteCategories,
+        getItemsSKU: Actions.getItemsSKU,
+        updateItemsSKU:Actions.updateItemsSKU,
+        deleteItemsSKU:Actions.deleteItemsSKU
     }, dispatch);
 }
 
-function mapStateToProps({categoryApp})
+function mapStateToProps({itemskuApp})
 {
     return {
-        categories  : categoryApp.categories.data,
-        searchText: categoryApp.categories.searchText
+        itemssku  : itemskuApp.itemssku.data,
+        searchText: itemskuApp.itemssku.searchText
     }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CategoryTable));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ItemSKUTable));

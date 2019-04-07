@@ -43,18 +43,18 @@ const styles = theme => ({
     }
 });
 
-class Category extends Component {
+class ItemSKU extends Component {
 
     state = {
         tabValue: 0,
         form    : null,
-        categories:[]
+        itemssku:[]
     };
 
     componentDidMount()
     {
        
-        this.updateCategoryState();
+        this.updateState();
     }
     componentDidUpdate(prevProps, prevState, snapshot)
     {
@@ -62,12 +62,12 @@ class Category extends Component {
        
         if ( !_.isEqual(this.props.location, prevProps.location) )
         {
-            this.updateCategoryState();
+            this.updateState();
         }
 
         if (
-            (this.props.category.data && !this.state.form) ||
-            (this.props.category.data && this.state.form && this.props.category.data._id !== this.state.form._id)
+            (this.props.itemsku.data && !this.state.form) ||
+            (this.props.itemsku.data && this.state.form && this.props.itemsku.data._id !== this.state.form._id)
         )
         {
             this.updateFormState();
@@ -76,20 +76,20 @@ class Category extends Component {
 
     updateFormState = () => {
      
-        this.setState({form: this.props.category.data,categories:this.props.categories});
+        this.setState({form: this.props.itemsku.data,itemssku :this.props.itemssku});
     };
 
-    updateCategoryState = () => {
+    updateState = () => {
         const params = this.props.match.params;
-        const {categoryId} = params;
-        this.props.getCategories();
-        if ( categoryId === 'new' )
+        const {itemSKUId} = params;
+        this.props.getItemsSKU();
+        if ( itemSKUId === 'new' )
         {
-            this.props.newCategory();
+            this.props.newItemSKU();
         }
         else
         {
-            this.props.getCategory(this.props.match.params);
+            this.props.getItemSKU(this.props.match.params);
         }
      
     };
@@ -104,7 +104,7 @@ class Category extends Component {
 
     handleChipChange = (value) => {
    
-        this.setState({form: _.set({...this.state.form}, 'catParent', value)});
+        this.setState({form: _.set({...this.state.form}, 'skuParent', value)});
     };
 
     setFeaturedImage = (id) => {
@@ -113,19 +113,19 @@ class Category extends Component {
 
     canBeSubmitted()
     {
-        const {catDesc} = this.state.form;
+        const {skuName} = this.state.form;
         return (
-            catDesc.length > 0 &&
-            !_.isEqual(this.props.category.data, this.state.form)
+            skuName.length > 0 &&
+            !_.isEqual(this.props.itemsku.data, this.state.form)
         );
     }
     render()
     {
-        if(this.props.category.isReady){
-            return <Redirect to={"/apps/category/categories"}/>
+        if(this.props.itemsku.isReady){
+            return <Redirect to={"/apps/itemsku/itemssku"}/>
            
         }
-        const {classes, saveCategory,removeCategory,updateCategory} = this.props;
+        const {classes, saveItemSKU,removeItemSKU,updateItemSKU} = this.props;
         const {tabValue, form} = this.state;
       
         return (
@@ -141,28 +141,24 @@ class Category extends Component {
                             <div className="flex flex-col items-start max-w-full">
 
                                 <FuseAnimate animation="transition.slideRightIn" delay={300}>
-                                    <Typography className="normal-case flex items-center sm:mb-12" component={Link} role="button" to="/apps/category/categories">
+                                    <Typography className="normal-case flex items-center sm:mb-12" component={Link} role="button" to="/apps/itemsku/itemssku">
                                         <Icon className="mr-4 text-20">arrow_back</Icon>
-                                        Category
+                                        Item SKU
                                     </Typography>
                                 </FuseAnimate>
 
                                 <div className="flex items-center max-w-full">
                                     <FuseAnimate animation="transition.expandIn" delay={300}>
-                                        {form.catImage.length > 0 ? (
-                                            <img className="w-32 sm:w-48 mr-8 sm:mr-16 rounded" src={_.find(form.catImage, {id: form.featuredImageId}).url} alt={form.catDesc}/>
-                                        ) : (
-                                            <img className="w-32 sm:w-48 mr-8 sm:mr-16 rounded" src="assets/images/ecommerce/product-image-placeholder.png" alt={form.catDesc}/>
-                                        )}
+                                    <img className="w-32 sm:w-48 mr-8 sm:mr-16 rounded" src="assets/images/ecommerce/product-image-placeholder.png" alt={form.skuName}/>
                                     </FuseAnimate>
                                     <div className="flex flex-col min-w-0">
                                         <FuseAnimate animation="transition.slideLeftIn" delay={300}>
                                             <Typography className="text-16 sm:text-20 truncate">
-                                                {form.catDesc ? form.catDesc : 'New Category'}
+                                                {form.skuName ? form.skuName : 'New Item SKU'}
                                             </Typography>
                                         </FuseAnimate>
                                         <FuseAnimate animation="transition.slideLeftIn" delay={300}>
-                                            <Typography variant="caption">Category Detail</Typography>
+                                            <Typography variant="caption">Item SKU Detail</Typography>
                                         </FuseAnimate>
                                     </div>
                                 </div>
@@ -173,7 +169,7 @@ class Category extends Component {
                                     className="whitespace-no-wrap"
                                     variant="contained"
                                     disabled={!this.canBeSubmitted()&& form._id===undefined}
-                                    onClick={() =>form._id===undefined?saveCategory(form): this.canBeSubmitted() && form._id!==undefined? updateCategory(form):removeCategory(form)}
+                                    onClick={() =>form._id===undefined?saveItemSKU(form): this.canBeSubmitted() && form._id!==undefined? updateItemSKU(form):removeItemSKU(form)}
                                     
                                 >
                                
@@ -194,7 +190,7 @@ class Category extends Component {
                         classes={{root: "w-full h-64"}}
                     >
                         <Tab className="h-64 normal-case" label="Basic Info"/>
-                        {/* <Tab className="h-64 normal-case" label="Category Images"/> */}
+                        {/* <Tab className="h-64 normal-case" label="ItemSKU Images"/> */}
                     </Tabs>
                 }
                 content={
@@ -206,13 +202,13 @@ class Category extends Component {
 
                                     <TextField
                                         className="mt-8 mb-16"
-                                        error={form.catCode === ''}
+                                        error={form.skuCode === ''}
                                         required
-                                        label="Code"
+                                        label="Code /SKU Code"
                                         autoFocus
-                                        id="catCode"
-                                        name="catCode"
-                                        value={form.catCode}
+                                        id="skuCode"
+                                        name="skuCode"
+                                        value={form.skuCode}
                                         onChange={this.handleChange}
                                         variant="outlined"
                                         fullWidth
@@ -220,24 +216,24 @@ class Category extends Component {
 
                                     <TextField
                                         className="mt-8 mb-16"
-                                        id="catDesc"
-                                        name="catDesc"
+                                        id="skuName"
+                                        name="skuName"
                                         onChange={this.handleChange}
                                         label="Description"
                                         type="text"
-                                        value={form.catDesc}
+                                        value={form.skuName}
                                         rows={5}
                                         variant="outlined"
                                         fullWidth
                                     />
                                         <TextField
                                         className="mt-8 mb-16"
-                                        id="catDesc2"
-                                        name="catDesc2"
+                                        id="skuDesc"
+                                        name="skuDesc"
                                         onChange={this.handleChange}
                                         label="Description"
                                         type="text"
-                                        value={form.catDesc2}
+                                        value={form.skuDesc}
                                         multiline
                                         rows={5}
                                         variant="outlined"
@@ -246,9 +242,9 @@ class Category extends Component {
                                     <FormControlLabel control={
                                           <Checkbox
                                      
-                                          id="catStatus"
-                                          name="catStatus"
-                                          checked={form.catStatus}
+                                          id="skuStatus"
+                                          name="skuStatus"
+                                          checked={form.skuStatus}
                                           onChange={this.handleChange}
                                          />
                                     }
@@ -257,12 +253,12 @@ class Category extends Component {
                                    
                                     <FuseChipSelect
                                         className="mt-8 mb-24"
-                                        value={form.catParent
+                                        value={form.skuParent
                                         }
                                         onChange={(value) => this.handleChipChange(value)}
-                                        placeholder="Select category"
+                                        placeholder="Select itemsku"
                                         textFieldProps={{
-                                            label          : 'Categories',
+                                            label          : 'Items SKU',
                                             InputLabelProps: {
                                                 shrink: true
                                             },
@@ -270,9 +266,9 @@ class Category extends Component {
                                         }}
                                         isMulti
                                        options={
-                                        this.state.categories.data.map(item => ({
-                                            label: item.catDesc,
-                                            value: item.catCode
+                                        this.state.itemssku.data.map(item => ({
+                                            label: item.skuName,
+                                            value: item.skuCode
                                            
                                         }))}
                                     />
@@ -293,7 +289,7 @@ class Category extends Component {
                                                 key={media.id}
                                             >
                                                 <Icon className={classes.productImageFeaturedStar}>star</Icon>
-                                                <img className="max-w-none w-auto h-full" src={media.url} alt="product"/>
+                                                <img className="max-w-none w-auto h-full" src={media.url} alt="sku"/>
                                             </div>
                                         ))}
                                     </div>
@@ -311,23 +307,23 @@ class Category extends Component {
 function mapDispatchToProps(dispatch)
 {
     return bindActionCreators({
-        getCategories:Actions.getCategories,
-        getCategory : Actions.getCategory,
-        newCategory : Actions.newCategory,
-        saveCategory: Actions.saveCategory,
-        updateCategory:Actions.updateCategory,
-        removeCategory:Actions.removeCategory
+        getItemsSKU:Actions.getItemsSKU,
+        getItemSKU : Actions.getItemSKU,
+        newItemSKU : Actions.newItemSKU,
+        saveItemSKU: Actions.saveItemSKU,
+        updateItemSKU:Actions.updateItemSKU,
+        removeItemSKU:Actions.removeItemSKU
      
     }, dispatch);
 }
 
-function mapStateToProps({categoryApp})
+function mapStateToProps({itemskuApp})
 {
     return {
-        categories:categoryApp.categories,
-        category: categoryApp.category
+        itemssku:itemskuApp.itemssku,
+        itemsku: itemskuApp.itemsku
         
     }
 }
 
-export default withReducer('categoryApp', reducer)(withStyles(styles, {withTheme: true})(withRouter(connect(mapStateToProps, mapDispatchToProps)(Category))));
+export default withReducer('itemskuApp', reducer)(withStyles(styles, {withTheme: true})(withRouter(connect(mapStateToProps, mapDispatchToProps)(ItemSKU))));

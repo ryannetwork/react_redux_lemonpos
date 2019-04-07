@@ -8,6 +8,13 @@ export const apiEnum={
         getCategories: BaseUrl + 'inventory/category',
         getCategoryById:BaseUrl + 'inventory/category/',
         deleteCategoryById:BaseUrl + 'inventory/category/',
+    },
+    ItemSKU:{
+        createItemSKU :BaseUrl + 'inventory/itemsku/create',
+        updateItemSKU:BaseUrl + 'inventory/itemsku/update',
+        getItemsSKU: BaseUrl + 'inventory/itemsku',
+        getItemSKUById:BaseUrl + 'inventory/itemsku/',
+        deleteItemSKUById:BaseUrl + 'inventory/itemsku/',
     }
     }
 };
